@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ReplyLikes from "../utils/ReplyLikes";
+import EditReply from "./EditReply";
 
 const Replies = () => {
   const [thread, setThread] = useState(null);
@@ -11,6 +12,42 @@ const Replies = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [replyLikes, setReplyLikes] = useState([]);
+  const [editReplyId, setEditReplyId] = useState(null); // State variable to store the ID of the reply being edited
+
+  const handleEditReply = (replyId, newText) => {
+    fetch(`http://localhost:4000/api/edit/reply/${id}/${replyId}`, {
+      method: "PUT",
+      body: JSON.stringify({ newText }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Failed to edit reply");
+        }
+      })
+      .then((data) => {
+        // Update the replyList with the edited reply
+        setReplyList((prevReplyList) =>
+          prevReplyList.map((reply) => {
+            if (reply._id === replyId) {
+              return {
+                ...reply,
+                text: newText,
+                edited: true,
+              };
+            }
+            return reply;
+          })
+        );
+        alert(data.message);
+        setEditReplyId(null); // Turn off the editing mode
+      })
+      .catch((err) => console.error(err));
+  };
 
   const addReply = () => {
     fetch(`http://localhost:4000/api/add/reply/${id}`, {
@@ -31,20 +68,17 @@ const Replies = () => {
         }
       })
       .then((data) => {
-        
         window.location.reload(); // Refresh the page
         if (data.message === "Reply added successfully!") {
           const newReply = {
             _id: data.reply._id,
             text: reply,
             name: "User",
-            
           };
           setReplyList((prevReplyList) => [...prevReplyList, newReply]);
           setReplyLikes((prevLikes) => [...prevLikes, newReply._id]); // Add the new reply's _id to replyLikes state
           alert(data.message);
-
-          navigate("/:id/replies"); // Navigate to the main page after successful reply submission
+          navigate(`/${id}/replies`); // Navigate to the main page after successful reply submission
         } else {
           alert(data.message); // Display the error message
         }
@@ -138,24 +172,43 @@ const Replies = () => {
       <div className="thread__container">
         {replyList.map((reply) => (
           <div className="thread__item" key={reply._id}>
-            <p>{reply.text}</p>
-            <div className="react__container">
-              <p style={{ opacity: "0.5" }}>by {reply.name}</p>
-              <p style={{ opacity: "0.5" }}>{reply.timestamp}</p>
-
-              {localStorage.getItem("_id") === reply.userId && (
-                <button
-                  className="modalBtn"
-                  onClick={() => deleteReply(reply._id)}
-                >
-                  Delete
-                </button>
-              )}
-              <ReplyLikes
-                numberOfLikes={reply.likes.length}
+            {editReplyId === reply._id ? (
+              // If editing this reply, display the EditReply component
+              <EditReply
                 replyId={reply._id}
+                initialText={reply.text}
+                onEdit={handleEditReply}
               />
-            </div>
+            ) : (
+              // Otherwise, display the reply information
+              <div>
+                <p>{reply.text}</p>
+                <div className="react__container">
+                  <p style={{ opacity: "0.5" }}>by {reply.name}</p>
+                  <p style={{ opacity: "0.5" }}>{reply.timestamp}</p>
+                  {localStorage.getItem("_id") === reply.userId && (
+                    <div>
+                      <button
+                        className="modalBtn"
+                        onClick={() => setEditReplyId(reply._id)} // Turn on editing mode
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="modalBtn"
+                        onClick={() => deleteReply(reply._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                  <ReplyLikes
+                    numberOfLikes={reply.likes.length}
+                    replyId={reply._id}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

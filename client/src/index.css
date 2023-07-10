@@ -194,3 +194,7 @@ p {
 .edited {
   background-color: yellow;
 }
+.button-container {
+  display: flex;
+  align-items: center;
+}
