@@ -31,15 +31,17 @@ const Replies = () => {
         }
       })
       .then((data) => {
-        alert(data.message);
+        
         window.location.reload(); // Refresh the page
         if (data.message === "Reply added successfully!") {
           const newReply = {
             _id: data.reply._id,
             text: reply,
             name: "User",
+            
           };
           setReplyList((prevReplyList) => [...prevReplyList, newReply]);
+          setReplyLikes((prevLikes) => [...prevLikes, newReply._id]); // Add the new reply's _id to replyLikes state
           alert(data.message);
 
           navigate("/:id/replies"); // Navigate to the main page after successful reply submission
