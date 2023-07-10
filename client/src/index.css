@@ -153,7 +153,6 @@ a {
   cursor: pointer;
   border-radius: 3px;
 }
-/* Add this code to your existing CSS file */
 
 .deleteBtn {
   display: flex;
@@ -195,6 +194,10 @@ p {
   background-color: yellow;
 }
 .button-container {
+  display: flex;
+  align-items: center;
+}
+.QuestionListButtonContainer {
   display: flex;
   align-items: center;
 }

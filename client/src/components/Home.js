@@ -143,7 +143,9 @@ const Home = () => {
           </div>
           <button className="homeBtn">CREATE THREAD</button>
         </form>
-
+        <Link to="/question-list" className="modalBtn">
+          Go to Question List
+        </Link>
         <div className="thread__container">
           {threadList.map((thread) => (
             <div
@@ -191,7 +193,6 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <Link to="/question-list">Go to Question List</Link>
       </main>
     </>
   );

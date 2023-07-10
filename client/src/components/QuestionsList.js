@@ -75,13 +75,22 @@ const QuestionsList = () => {
     <div>
       <h1>Klausimų sąrašas</h1>
 
-      <div>
-        <button onClick={handleSortByDate}>Rikiuoti pagal datą</button>
-        <button onClick={handleSortByAnswerCount}>
+      <div className="QuestionListButtonContainer">
+        <button onClick={handleSortByDate} className="modalBtn">
+          Rikiuoti pagal datą
+        </button>
+        <button onClick={handleSortByAnswerCount} className="modalBtn">
           Rikiuoti pagal atsakymų skaičių
         </button>
-        <button onClick={() => handleSortOrder("asc")}>Didėjimo tvarka</button>
-        <button onClick={() => handleSortOrder("desc")}>Mažėjimo tvarka</button>
+        <button onClick={() => handleSortOrder("asc")} className="modalBtn">
+          Didėjimo tvarka
+        </button>
+        <button onClick={() => handleSortOrder("desc")} className="modalBtn">
+          Mažėjimo tvarka
+        </button>
+        <Link to="/dashboard" className="modalBtn">
+          Create a Thread
+        </Link>
       </div>
 
       <div>
@@ -94,8 +103,6 @@ const QuestionsList = () => {
           </div>
         ))}
       </div>
-
-      <Link to="/dashboard">Sukurti klausimą</Link>
     </div>
   );
 };
