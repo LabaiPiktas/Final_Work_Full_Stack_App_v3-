@@ -94,6 +94,7 @@ a {
   margin-right: 25px;
 }
 .likesBtn {
+  margin-left: 10px;
   height: 30px;
   color: #f99417;
   cursor: pointer;
@@ -183,4 +184,8 @@ a {
 .modalBtn:hover,
 .homeBtn:hover {
   background-color: #5b7db7;
+}
+p {
+  margin-left: 5px;
+  margin-right: 5px;
 }

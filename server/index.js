@@ -3,16 +3,21 @@ const { MongoClient } = require("mongodb");
 const { ObjectId } = require("mongodb");
 const cors = require("cors");
 
+require('dotenv').config();
+
+const PORT = process.env.PORT || 8080;
+const url = process.env.DB_CONNECTION_STRING;
+const dbName = process.env.DB_NAME;
+
+
 const app = express();
-const PORT = 4000;
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-const url =
-  "mongodb+srv://labailabaipiktas:admin@cluster0.hdqzuam.mongodb.net/?retryWrites=true&w=majority";
-const dbName = "FullStackAppDatabase";
+
 
 const generateID = () => Math.random().toString(36).substring(2, 10);
 
