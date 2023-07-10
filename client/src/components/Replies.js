@@ -11,7 +11,7 @@ const Replies = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [replyLikes, setReplyLikes] = useState([]);
+  const [setReplyLikes] = useState([]);
   const [editReplyId, setEditReplyId] = useState(null); // State variable to store the ID of the reply being edited
 
   const handleEditReply = (replyId, newText) => {

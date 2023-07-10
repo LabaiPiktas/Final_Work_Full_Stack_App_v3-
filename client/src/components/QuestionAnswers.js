@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const QuestionAnswers = () => {
   const { id } = useParams();
@@ -24,14 +24,18 @@ const QuestionAnswers = () => {
   return (
     <div>
       <h2>Question & Answers</h2>
+      <Link to="/question-list" className="homeBtn">
+        Go Back
+      </Link>{" "}
+      {/* Nuoroda į "Question List" puslapį */}
       {question ? (
-        <div>
+        <div className="question-answers-container">
           <h3>{question.title}</h3>
           <p>Question Content: {question.content}</p>
           <p>Number of Replies: {question.replies?.length || 0}</p>
           <h4>Replies:</h4>
           {question.replies.map((reply) => (
-            <div key={reply.id}>
+            <div key={reply.id} className="question-answers-container">
               <p>Reply Text: {reply.text}</p>
               <p>User ID: {reply.userId}</p>
               <p>Timestamp: {reply.timestamp}</p>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const QuestionsList = () => {
   const [questions, setQuestions] = useState([]);
@@ -9,7 +9,6 @@ const QuestionsList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
 
-  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -97,7 +96,7 @@ const QuestionsList = () => {
     <div>
       <h1>Klausimų sąrašas</h1>
 
-      <div className="QuestionListButtonContainer">
+      <div className="questionListButtonContainer">
         <button onClick={handleSortByDate} className="modalBtn">
           Rikiuoti pagal datą
         </button>
@@ -124,10 +123,9 @@ const QuestionsList = () => {
         </Link>
       </div>
 
-      <div>
+      <div className="questionAndAnswerListContainer">
         {sortedQuestions.map((question) => (
           <div key={question.id}>
-            {/* Display question information */}
             <h3>{question.title}</h3>
             <p>Atsakymų skaičius: {question.replies.length}</p>
             <p>Klausimo data: {question.timestamp}</p>
