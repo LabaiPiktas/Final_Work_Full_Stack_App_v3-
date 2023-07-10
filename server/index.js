@@ -336,6 +336,24 @@ MongoClient.connect(url, { useUnifiedTopology: true })
         });
     });
 
+    app.get("/api/thread/:id", (req, res) => {
+      const { id } = req.params;
+
+      threadListCollection
+        .findOne({ id })
+        .then((thread) => {
+          if (thread) {
+            res.json(thread);
+          } else {
+            res.status(404).json({ error_message: "Thread not found" });
+          }
+        })
+        .catch((error) => {
+          console.error("Error retrieving thread:", error);
+          res.sendStatus(500);
+        });
+    });
+
     // ...
 
     app.listen(PORT, () => {

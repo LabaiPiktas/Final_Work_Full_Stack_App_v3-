@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import Replies from "./components/Replies";
 import ReplyPage from "./components/ReplyPage";
 import QuestionsList from "./components/QuestionsList";
+import QuestionAnswers from "./components/QuestionAnswers";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/:id/replies" element={<Replies />} />
           <Route path="/:parentId/replies/:replyId" element={<ReplyPage />} />
           <Route path="/question-list" element={<QuestionsList />} />
+          <Route path="/answers/:id" element={<QuestionAnswers />} />
         </Routes>
       </BrowserRouter>
     </div>

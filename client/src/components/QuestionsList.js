@@ -8,7 +8,6 @@ const QuestionsList = () => {
   const [sortByAnswerCount, setSortByAnswerCount] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
   const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
-  const [filteredQuestions, setFilteredQuestions] = useState([]);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,15 +65,14 @@ const QuestionsList = () => {
       });
     }
 
-    // Set the updated sorted and filtered questions arrays
+    // Set the updated sorted questions array
     setSortedQuestions(sortedQuestions);
-    setFilteredQuestions(sortedQuestions);
   }, [
     questions,
-    showAnsweredQuestions,
     sortByDate,
     sortByAnswerCount,
     sortOrder,
+    showAnsweredQuestions,
   ]);
 
   const handleSortByDate = () => {
@@ -89,6 +87,10 @@ const QuestionsList = () => {
 
   const handleSortOrder = (order) => {
     setSortOrder(order);
+  };
+
+  const handleSeeAnswers = (questionId) => {
+    navigate(`/answers/${questionId}`);
   };
 
   return (
@@ -123,12 +125,18 @@ const QuestionsList = () => {
       </div>
 
       <div>
-        {filteredQuestions.map((question) => (
+        {sortedQuestions.map((question) => (
           <div key={question.id}>
             {/* Display question information */}
             <h3>{question.title}</h3>
             <p>Atsakymų skaičius: {question.replies.length}</p>
             <p>Klausimo data: {question.timestamp}</p>
+            <button
+              onClick={() => handleSeeAnswers(question.id)}
+              className="modalBtn"
+            >
+              See Answers
+            </button>
           </div>
         ))}
       </div>
