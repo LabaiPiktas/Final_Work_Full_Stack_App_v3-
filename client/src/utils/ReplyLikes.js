@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const ReplyLikes = ({ numberOfLikes, replyId }) => {
   const [likesCount, setLikesCount] = useState(numberOfLikes);
+  const [likes, setLikes] = useState([]); // Add likes state
 
   const handleLikeFunction = () => {
     fetch("http://localhost:4000/api/like/reply", {

@@ -275,6 +275,73 @@ MongoClient.connect(url, { useUnifiedTopology: true })
 
     // ...
 
+    app.put("/api/edit/thread/:threadId", (req, res) => {
+      const { threadId } = req.params;
+      const { newText } = req.body;
+    
+      threadListCollection
+        .findOneAndUpdate(
+          { id: threadId },
+          { $set: { title: newText, edited: true } },
+          { returnOriginal: false }
+        )
+        .then((result) => {
+          const updatedThread = result.value;
+          if (updatedThread) {
+            res.json({
+              message: "Thread edited successfully!",
+              thread: updatedThread,
+            });
+          } else {
+            res.json({
+              error_message: "Thread not found",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error editing thread:", error);
+          res.sendStatus(500);
+        });
+    });
+    
+    // PUT route to edit a reply
+    app.put("/api/edit/reply/:threadId/:replyId", (req, res) => {
+      const { threadId, replyId } = req.params;
+      const { newText } = req.body;
+
+      threadListCollection
+        .findOneAndUpdate(
+          { id: threadId, "replies._id": new ObjectId(replyId) },
+          { $set: { "replies.$.text": newText, "replies.$.edited": true } },
+          { returnOriginal: false }
+        )
+        .then((result) => {
+          const updatedThread = result.value;
+          if (updatedThread) {
+            const updatedReply = updatedThread.replies.find(
+              (reply) => reply._id.toString() === replyId
+            );
+            res.json({
+              success: true,
+              thread: updatedThread,
+              reply: updatedReply,
+            });
+          } else {
+            res.json({
+              success: false,
+              message: "Thread or reply not found",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error editing reply:", error);
+          res.sendStatus(500);
+        });
+    });
+
+
+// ...
+
     app.listen(PORT, () => {
       console.log(`Server listening on ${PORT}`);
     });

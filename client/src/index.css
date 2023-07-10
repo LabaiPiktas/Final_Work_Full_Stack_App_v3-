@@ -55,6 +55,7 @@ a {
   color: #fffbf5;
   background-color: #674188;
   margin-bottom: 15px;
+  margin-right: 5px;
 }
 .homeForm {
   display: flex;
@@ -163,6 +164,7 @@ a {
   background-color: transparent;
   cursor: pointer;
   color: #f44336;
+  margin-right: 5px;
 }
 
 .deleteBtn:hover {
@@ -188,4 +190,7 @@ a {
 p {
   margin-left: 5px;
   margin-right: 5px;
+}
+.edited {
+  background-color: yellow;
 }
