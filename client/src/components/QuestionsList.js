@@ -7,6 +7,9 @@ const QuestionsList = () => {
   const [sortByDate, setSortByDate] = useState(false);
   const [sortByAnswerCount, setSortByAnswerCount] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
+  const [filteredQuestions, setFilteredQuestions] = useState([]);
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -27,6 +30,16 @@ const QuestionsList = () => {
 
   useEffect(() => {
     let sortedQuestions = [...questions]; // Copy the original questions array
+
+    if (showAnsweredQuestions) {
+      sortedQuestions = sortedQuestions.filter(
+        (question) => question.replies.length > 0
+      );
+    } else {
+      sortedQuestions = sortedQuestions.filter(
+        (question) => question.replies.length === 0
+      );
+    }
 
     if (sortByDate) {
       sortedQuestions.sort((a, b) => {
@@ -53,9 +66,16 @@ const QuestionsList = () => {
       });
     }
 
-    // Set the updated sorted questions array
+    // Set the updated sorted and filtered questions arrays
     setSortedQuestions(sortedQuestions);
-  }, [questions, sortByDate, sortByAnswerCount, sortOrder]);
+    setFilteredQuestions(sortedQuestions);
+  }, [
+    questions,
+    showAnsweredQuestions,
+    sortByDate,
+    sortByAnswerCount,
+    sortOrder,
+  ]);
 
   const handleSortByDate = () => {
     setSortByDate(true);
@@ -88,13 +108,22 @@ const QuestionsList = () => {
         <button onClick={() => handleSortOrder("desc")} className="modalBtn">
           Mažėjimo tvarka
         </button>
+        <button
+          onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+          className="modalBtn"
+        >
+          {showAnsweredQuestions
+            ? "Rodyti neatsakytus klausimus"
+            : "Rodyti atsakytus klausimus"}
+        </button>
+
         <Link to="/dashboard" className="modalBtn">
           Create a Thread
         </Link>
       </div>
 
       <div>
-        {sortedQuestions.map((question) => (
+        {filteredQuestions.map((question) => (
           <div key={question.id}>
             {/* Display question information */}
             <h3>{question.title}</h3>
