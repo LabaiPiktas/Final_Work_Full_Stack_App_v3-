@@ -3,21 +3,17 @@ const { MongoClient } = require("mongodb");
 const { ObjectId } = require("mongodb");
 const cors = require("cors");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
 const url = process.env.DB_CONNECTION_STRING;
 const dbName = process.env.DB_NAME;
 
-
 const app = express();
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
-
-
 
 const generateID = () => Math.random().toString(36).substring(2, 10);
 
@@ -97,6 +93,7 @@ MongoClient.connect(url, { useUnifiedTopology: true })
         replies: [], // Initialize the replies array as empty
         replies: [],
         likes: [],
+        timestamp: new Date().toISOString(),
       };
 
       threadListCollection
@@ -278,7 +275,7 @@ MongoClient.connect(url, { useUnifiedTopology: true })
     app.put("/api/edit/thread/:threadId", (req, res) => {
       const { threadId } = req.params;
       const { newText } = req.body;
-    
+
       threadListCollection
         .findOneAndUpdate(
           { id: threadId },
@@ -303,7 +300,7 @@ MongoClient.connect(url, { useUnifiedTopology: true })
           res.sendStatus(500);
         });
     });
-    
+
     // PUT route to edit a reply
     app.put("/api/edit/reply/:threadId/:replyId", (req, res) => {
       const { threadId, replyId } = req.params;
@@ -339,8 +336,7 @@ MongoClient.connect(url, { useUnifiedTopology: true })
         });
     });
 
-
-// ...
+    // ...
 
     app.listen(PORT, () => {
       console.log(`Server listening on ${PORT}`);

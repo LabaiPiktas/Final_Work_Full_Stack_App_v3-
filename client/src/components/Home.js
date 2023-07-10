@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Likes from "../utils/Likes";
 import Comments from "../utils/Comments";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Nav from "./Nav";
 
 const Home = () => {
@@ -107,7 +107,9 @@ const Home = () => {
   useEffect(() => {
     const fetchThread = async (threadId) => {
       try {
-        const response = await fetch(`http://localhost:4000/api/thread/${threadId}`);
+        const response = await fetch(
+          `http://localhost:4000/api/thread/${threadId}`
+        );
         const data = await response.json();
         const updatedThreadList = threadList.map((thread) =>
           thread.id === threadId ? data.thread : thread
@@ -148,11 +150,20 @@ const Home = () => {
               className={`thread__item ${thread.edited ? "edited" : ""}`}
               key={thread.id}
             >
-              <p style={{ color: editedThreads.includes(thread.id) ? "lightgray" : "inherit" }}>
+              <p
+                style={{
+                  color: editedThreads.includes(thread.id)
+                    ? "lightgray"
+                    : "inherit",
+                }}
+              >
                 {thread.title}
               </p>
               <div className="react__container">
-                <Likes numberOfLikes={thread.likes.length} threadId={thread.id} />
+                <Likes
+                  numberOfLikes={thread.likes.length}
+                  threadId={thread.id}
+                />
                 <Comments
                   numberOfComments={thread.replies.length}
                   threadId={thread.id}
@@ -180,6 +191,7 @@ const Home = () => {
             </div>
           ))}
         </div>
+        <Link to="/question-list">Go to Question List</Link>
       </main>
     </>
   );

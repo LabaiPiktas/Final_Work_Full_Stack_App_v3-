@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Home from "./components/Home";
 import Replies from "./components/Replies";
 import ReplyPage from "./components/ReplyPage";
+import QuestionsList from "./components/QuestionsList";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/dashboard" element={<Home />} />
           <Route path="/:id/replies" element={<Replies />} />
           <Route path="/:parentId/replies/:replyId" element={<ReplyPage />} />
+          <Route path="/question-list" element={<QuestionsList />} />
         </Routes>
       </BrowserRouter>
     </div>

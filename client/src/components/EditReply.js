@@ -15,7 +15,9 @@ const EditReply = ({ replyId, initialText, onEdit }) => {
         value={newText}
         onChange={(e) => setNewText(e.target.value)}
       />
-      <button className="modalBtn" onClick={handleEdit}>Save</button>
+      <button className="modalBtn" onClick={handleEdit}>
+        Save
+      </button>
     </div>
   );
 };

@@ -11,43 +11,49 @@ const QuestionsList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Įkelkite klausimų sąrašą iš serverio (ar kitos duomenų šaltinio)
-    const fetchQuestions = () => {
-      // Įkelimo logika...
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/api/all/threads");
+        const data = await response.json();
+        console.log("Data received from the server:", data); // Check the data received
+        setQuestions(data.threads);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      }
     };
 
     fetchQuestions();
   }, []);
 
   useEffect(() => {
-    let sortedQuestions = [...questions]; // Kopijuojame pradinį klausimų sąrašą
+    let sortedQuestions = [...questions]; // Copy the original questions array
 
     if (sortByDate) {
       sortedQuestions.sort((a, b) => {
-        // Rikiuojame pagal klausimo datą
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+        // Sort by question date
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
 
         if (sortOrder === "asc") {
-          return dateA - dateB; // Didėjimo tvarka
+          return dateA - dateB; // Ascending order
         } else {
-          return dateB - dateA; // Mažėjimo tvarka
+          return dateB - dateA; // Descending order
         }
       });
     }
 
     if (sortByAnswerCount) {
       sortedQuestions.sort((a, b) => {
-        // Rikiuojame pagal atsakymų skaičių
+        // Sort by answer count
         if (sortOrder === "asc") {
-          return a.answers.length - b.answers.length; // Didėjimo tvarka
+          return a.replies.length - b.replies.length; // Ascending order
         } else {
-          return b.answers.length - a.answers.length; // Mažėjimo tvarka
+          return b.replies.length - a.replies.length; // Descending order
         }
       });
     }
 
-    // Nustatome atnaujintą rikiuotą klausimų sąrašą
+    // Set the updated sorted questions array
     setSortedQuestions(sortedQuestions);
   }, [questions, sortByDate, sortByAnswerCount, sortOrder]);
 
@@ -81,16 +87,15 @@ const QuestionsList = () => {
       <div>
         {sortedQuestions.map((question) => (
           <div key={question.id}>
-            {/* Rodyti klausimo informaciją */}
+            {/* Display question information */}
             <h3>{question.title}</h3>
-            <p>{question.content}</p>
-            <p>Atsakymų skaičius: {question.answers.length}</p>
-            <p>Klausimo data: {question.date}</p>
+            <p>Atsakymų skaičius: {question.replies.length}</p>
+            <p>Klausimo data: {question.timestamp}</p>
           </div>
         ))}
       </div>
 
-      <Link to="/create-question">Sukurti klausimą</Link>
+      <Link to="/dashboard">Sukurti klausimą</Link>
     </div>
   );
 };
