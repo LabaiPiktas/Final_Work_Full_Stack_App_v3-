@@ -109,6 +109,8 @@ const Replies = () => {
               return {
                 ...reply,
                 likes: reply.likes || [],
+                name:
+                  reply.userId === localStorage.getItem("_id") ? "You" : "User", // Set the name based on the userId
               };
             });
             setReplyList(updatedReplies);
