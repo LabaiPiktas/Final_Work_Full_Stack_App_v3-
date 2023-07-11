@@ -147,51 +147,52 @@ const Home = () => {
           Go to Question List
         </Link>
         <div className="thread__container">
-          {threadList.map((thread) => (
-            <div
-              className={`thread__item ${thread.edited ? "edited" : ""}`}
-              key={thread.id}
-            >
-              <p
-                style={{
-                  color: editedThreads.includes(thread.id)
-                    ? "lightgray"
-                    : "inherit",
-                }}
+          {threadList.length > 0 &&
+            threadList.map((thread) => (
+              <div
+                className={`thread__item ${thread.edited ? "edited" : ""}`}
+                key={thread.id}
               >
-                {thread.title}
-              </p>
-              <div className="react__container">
-                <Likes
-                  numberOfLikes={thread.likes.length}
-                  threadId={thread.id}
-                />
-                <Comments
-                  numberOfComments={thread.replies.length}
-                  threadId={thread.id}
-                  title={thread.title}
-                />
-                {localStorage.getItem("_id") && (
-                  <>
-                    <button
-                      className="modalBtn"
-                      onClick={() => deleteThread(thread.id)}
-                    >
-                      Delete Thread
-                    </button>
-                    {!thread.edited && (
+                <p
+                  style={{
+                    color: editedThreads.includes(thread.id)
+                      ? "lightgray"
+                      : "inherit",
+                  }}
+                >
+                  {thread.title}
+                </p>
+                <div className="react__container">
+                  <Likes
+                    numberOfLikes={thread.likes.length}
+                    threadId={thread.id}
+                  />
+                  <Comments
+                    numberOfComments={thread.replies.length}
+                    threadId={thread.id}
+                    title={thread.title}
+                  />
+                  {localStorage.getItem("_id") && (
+                    <>
                       <button
                         className="modalBtn"
-                        onClick={() => handleEdit(thread.id)}
+                        onClick={() => deleteThread(thread.id)}
                       >
-                        Edit Thread
+                        Delete Thread
                       </button>
-                    )}
-                  </>
-                )}
+                      {!thread.edited && (
+                        <button
+                          className="modalBtn"
+                          onClick={() => handleEdit(thread.id)}
+                        >
+                          Edit Thread
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </main>
     </>
