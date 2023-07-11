@@ -8,7 +8,6 @@ const Home = () => {
   const [thread, setThread] = useState({ text: "" });
   const [threadList, setThreadList] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [editedThreads, setEditedThreads] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +31,6 @@ const Home = () => {
         thread: thread.text,
         userId: localStorage.getItem("_id"),
         replies: [],
-        edited: false,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -40,9 +38,9 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert(data.message);
         setRefresh((prevRefresh) => !prevRefresh);
         setThread({ text: "" });
+        alert(data.message);
       })
       .catch((err) => console.error(err));
   };
@@ -58,10 +56,10 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert(data.message);
         setThreadList((prevThreadList) =>
           prevThreadList.filter((thread) => thread.id !== threadId)
         );
+        alert(data.message);
       })
       .catch((error) => {
         console.error("Error deleting thread:", error);
@@ -72,7 +70,6 @@ const Home = () => {
     const newText = prompt("Enter the new text:");
     if (newText) {
       editThread(threadId, newText);
-      setEditedThreads((prevEditedThreads) => [...prevEditedThreads, threadId]);
     }
   };
 
@@ -90,11 +87,11 @@ const Home = () => {
       .then((data) => {
         if (data.thread) {
           const updatedThreadList = threadList.map((thread) =>
-            thread.id === threadId ? { ...data.thread, edited: true } : thread
+            thread.id === threadId ? data.thread : thread
           );
           setThreadList(updatedThreadList);
-          alert("Thread edited successfully!");
           setRefresh((prevRefresh) => !prevRefresh);
+          alert("Thread edited successfully!");
         } else {
           throw new Error(data.error_message);
         }
@@ -103,27 +100,6 @@ const Home = () => {
         console.error("Error editing thread:", error);
       });
   };
-
-  useEffect(() => {
-    const fetchThread = async (threadId) => {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/api/thread/${threadId}`
-        );
-        const data = await response.json();
-        const updatedThreadList = threadList.map((thread) =>
-          thread.id === threadId ? data.thread : thread
-        );
-        setThreadList(updatedThreadList);
-      } catch (error) {
-        console.error("Error fetching thread:", error);
-      }
-    };
-
-    editedThreads.forEach((editedThread) => {
-      fetchThread(editedThread);
-    });
-  }, [threadList, editedThreads]);
 
   return (
     <>
@@ -149,19 +125,8 @@ const Home = () => {
         <div className="thread__container">
           {threadList.length > 0 &&
             threadList.map((thread) => (
-              <div
-                className={`thread__item ${thread.edited ? "edited" : ""}`}
-                key={thread.id}
-              >
-                <p
-                  style={{
-                    color: editedThreads.includes(thread.id)
-                      ? "lightgray"
-                      : "inherit",
-                  }}
-                >
-                  {thread.title}
-                </p>
+              <div className="thread__item" key={thread.id}>
+                <p>{thread.title}</p>
                 <div className="react__container">
                   <Likes
                     numberOfLikes={thread.likes.length}
@@ -180,14 +145,12 @@ const Home = () => {
                       >
                         Delete Thread
                       </button>
-                      {!thread.edited && (
-                        <button
-                          className="modalBtn"
-                          onClick={() => handleEdit(thread.id)}
-                        >
-                          Edit Thread
-                        </button>
-                      )}
+                      <button
+                        className="modalBtn"
+                        onClick={() => handleEdit(thread.id)}
+                      >
+                        Edit Thread
+                      </button>
                     </>
                   )}
                 </div>
