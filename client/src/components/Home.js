@@ -5,6 +5,12 @@ import { useNavigate, Link } from "react-router-dom";
 import Nav from "./Nav";
 
 const Home = () => {
+  const [sortByDate, setSortByDate] = useState(false);
+  const [sortByAnswerCount, setSortByAnswerCount] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const [sortedThreads, setSortedThreads] = useState([]);
   const [thread, setThread] = useState({ text: "" });
   const [threadList, setThreadList] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -17,12 +23,105 @@ const Home = () => {
       } else {
         fetch("http://localhost:4000/api/all/threads")
           .then((res) => res.json())
-          .then((data) => setThreadList(data.threads))
+          .then((data) => {
+            setThreadList(data.threads);
+            filterThreads(data.threads);
+          })
           .catch((err) => console.error(err));
       }
     };
     checkUser();
   }, [navigate, refresh]);
+
+  useEffect(() => {
+    // Sort threads based on the selected options
+    let sortedThreads = [...threadList];
+
+    if (showAnsweredQuestions && !showAllQuestions) {
+      sortedThreads = sortedThreads.filter(
+        (thread) => thread.replies.length > 0
+      );
+    } else if (!showAnsweredQuestions && !showAllQuestions) {
+      sortedThreads = sortedThreads.filter(
+        (thread) => thread.replies.length === 0
+      );
+    }
+
+    if (sortByDate) {
+      sortedThreads.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+
+        if (sortOrder === "asc") {
+          return dateA - dateB;
+        } else {
+          return dateB - dateA;
+        }
+      });
+    }
+
+    if (sortByAnswerCount) {
+      sortedThreads.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a.replies.length - b.replies.length;
+        } else {
+          return b.replies.length - a.replies.length;
+        }
+      });
+    }
+
+    setSortedThreads(sortedThreads);
+  }, [
+    threadList,
+    sortByDate,
+    sortByAnswerCount,
+    sortOrder,
+    showAnsweredQuestions,
+    showAllQuestions,
+  ]);
+
+  const handleSortByDate = () => {
+    setSortByDate(true);
+    setSortByAnswerCount(false);
+  };
+
+  const handleSortByAnswerCount = () => {
+    setSortByDate(false);
+    setSortByAnswerCount(true);
+  };
+
+  const handleSortOrder = (order) => {
+    setSortOrder(order);
+  };
+
+  const filterThreads = (threads) => {
+    const answeredThreads = threads.filter((thread) => thread.replies.length > 0);
+    const unansweredThreads = threads.filter(
+      (thread) => thread.replies.length === 0
+    );
+    let filteredThreads = [];
+    if (showAnsweredQuestions && !showAllQuestions) {
+      filteredThreads = answeredThreads;
+    } else if (!showAnsweredQuestions && !showAllQuestions) {
+      filteredThreads = unansweredThreads;
+    } else {
+      filteredThreads = threads;
+    }
+    setSortedThreads(filteredThreads);
+  };
+
+  const handleToggleQuestions = () => {
+    if (showAllQuestions) {
+      setShowAnsweredQuestions(false);
+      setShowAllQuestions(false);
+    } else if (showAnsweredQuestions) {
+      setShowAnsweredQuestions(false);
+      setShowAllQuestions(true);
+    } else {
+      setShowAnsweredQuestions(true);
+      setShowAllQuestions(false);
+    }
+  };
 
   const createThread = () => {
     fetch("http://localhost:4000/api/create/thread", {
@@ -101,6 +200,11 @@ const Home = () => {
       });
   };
 
+  const handleButtonClick = () => {
+    // Functionality to be executed when the button is clicked
+    console.log("Button Clicked!");
+  };
+
   return (
     <>
       <Nav />
@@ -123,8 +227,44 @@ const Home = () => {
           Go to Question List
         </Link>
         <div className="thread__container">
-          {threadList.length > 0 &&
-            threadList.map((thread) => (
+          <div className="sort__buttons">
+            <button
+              onClick={handleSortByDate}
+              className={sortByDate ? "modalBtn active" : "modalBtn"}
+            >
+              Sort by Date
+            </button>
+            <button
+              onClick={handleSortByAnswerCount}
+              className={sortByAnswerCount ? "modalBtn active" : "modalBtn"}
+            >
+              Sort by Answer Count
+            </button>
+            <button
+              onClick={() => handleSortOrder("asc")}
+              className={sortOrder === "asc" ? "modalBtn active" : "modalBtn"}
+            >
+              Ascending Order
+            </button>
+            <button
+              onClick={() => handleSortOrder("desc")}
+              className={sortOrder === "desc" ? "modalBtn active" : "modalBtn"}
+            >
+              Descending Order
+            </button>
+            <button
+              onClick={handleToggleQuestions}
+              className="modalBtn"
+            >
+              {showAllQuestions
+                ? "Show Answered and Unanswered Questions"
+                : showAnsweredQuestions
+                ? "Show Unanswered Questions"
+                : "Show Answered Questions"}
+            </button>
+          </div>
+          {sortedThreads.length > 0 &&
+            sortedThreads.map((thread) => (
               <div className="thread__item" key={thread.id}>
                 <p>{thread.title}</p>
                 <div className="react__container">
